@@ -1,75 +1,80 @@
 # TaskFlow API
 
-A small RESTful to-do API built with **FastAPI** and **SQLite**, containerized with **Docker**.
+โปรเจกต์เล็กๆ ที่ผมทำไว้ฝึกเขียน REST API กับลองใช้ Docker ครับ เป็น API จัดการรายการงาน (to-do)
+ง่ายๆ เพิ่ม/ลบ/แก้/ดูงานได้ ทำด้วย FastAPI + SQLite
 
-I built this as a focused practice project to keep my backend/REST and Docker skills sharp
-alongside my main computer-vision work.
+ปกติงานหลักผมทำสาย computer vision เลยอยากมีโปรเจกต์ backend ไว้ฝึกมือไม่ให้ลืม 555
 
-## Features
+## มันทำอะไรได้บ้าง
 
-- REST CRUD for tasks (`create / read / list / update / delete`)
-- Filtering by completion state and priority
-- Request validation with Pydantic (empty titles → `422`)
-- Auto-generated OpenAPI docs at `/docs`
-- SQLite persistence via SQLModel
-- Dockerfile + docker-compose with a healthcheck
-- pytest test suite running against an isolated in-memory DB
+- เพิ่มงาน / ดูงานทั้งหมด / ดูงานทีละอัน / แก้ไข / ลบ
+- กรองงานตามความสำคัญ (priority) หรือกรองเฉพาะงานที่ทำเสร็จแล้ว
+- มีเช็คข้อมูลก่อนบันทึก (ใส่ title ว่างไม่ได้)
+- เข้า `/docs` แล้วลองยิง API ได้เลยผ่าน Swagger
+- รันผ่าน Docker ได้
 
-## Tech stack
+## ที่ใช้ทำ
 
-| Layer    | Choice                |
-|----------|-----------------------|
-| Language | Python 3.12           |
-| Framework| FastAPI               |
-| ORM      | SQLModel (SQLAlchemy) |
-| Database | SQLite                |
-| Tests    | pytest + TestClient   |
-| Runtime  | Docker / docker-compose |
+Python 3.12 · FastAPI · SQLModel (SQLite) · pytest · Docker
 
-## API
+## เส้นทาง (endpoints)
 
-| Method | Path               | Description                         |
-|--------|--------------------|-------------------------------------|
-| GET    | `/health`          | Liveness check                      |
-| GET    | `/api/tasks`       | List tasks (`?done=`, `?priority=`) |
-| POST   | `/api/tasks`       | Create a task                       |
-| GET    | `/api/tasks/{id}`  | Get one task                        |
-| PATCH  | `/api/tasks/{id}`  | Partial update / mark done          |
-| DELETE | `/api/tasks/{id}`  | Delete a task                       |
+| Method | Path | ทำอะไร |
+|--------|------|--------|
+| GET | `/health` | เช็คว่าเซิร์ฟเวอร์ยังอยู่ |
+| GET | `/api/tasks` | ดูงานทั้งหมด (ใส่ `?done=` `?priority=` กรองได้) |
+| POST | `/api/tasks` | เพิ่มงานใหม่ |
+| GET | `/api/tasks/{id}` | ดูงานอันเดียว |
+| PATCH | `/api/tasks/{id}` | แก้งาน / ติ๊กว่าเสร็จ |
+| DELETE | `/api/tasks/{id}` | ลบงาน |
 
-## Run locally
+## วิธีรัน (แบบปกติ)
 
 ```bash
-python -m venv .venv && source .venv/Scripts/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate            # ถ้าเป็น mac/linux ใช้ source .venv/bin/activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload
-# open http://localhost:8000/docs
 ```
 
-## Run with Docker
+เสร็จแล้วเปิด http://localhost:8000/docs
+
+## วิธีรัน (Docker)
 
 ```bash
 docker compose up --build
-# API on http://localhost:8000
 ```
 
-## Tests
+## รันเทส
 
 ```bash
 pip install -r requirements-dev.txt
 pytest -v
 ```
 
-## Example
+## ลองยิงดู
 
 ```bash
 curl -X POST http://localhost:8000/api/tasks \
   -H "Content-Type: application/json" \
-  -d '{"title": "Write report", "priority": "high"}'
-
-curl http://localhost:8000/api/tasks?priority=high
+  -d "{\"title\": \"อ่านหนังสือสอบ\", \"priority\": \"high\"}"
 ```
 
-## License
+---
 
-MIT — see [LICENSE](LICENSE).
+## English (short version)
+
+A small to-do REST API I built to practice backend development and Docker.
+My main work is in computer vision, so this is a side project to keep my REST/API
+skills fresh. Built with **FastAPI + SQLite**, runs in **Docker**, and has a small
+**pytest** suite.
+
+- Full CRUD for tasks, with filtering by `priority` / `done`
+- Input validation (empty title → `422`)
+- Auto Swagger docs at `/docs`
+
+Run locally: `uvicorn app.main:app --reload` → http://localhost:8000/docs
+Run with Docker: `docker compose up --build`
+Run tests: `pytest -v`
+
+License: MIT
